@@ -4,7 +4,7 @@ const sqlite3 = require('sqlite3').verbose();
 const app = express();
 const port = 3000;
 
-// Inicializando o banco de dados e criando tabelas
+//Inicializando o banco de dados e criando tabelas
 const db = new sqlite3.Database('./database.db', (err) => {
   if (err) {
     console.error(err.message);
@@ -40,7 +40,7 @@ const db = new sqlite3.Database('./database.db', (err) => {
         )`);
 });
 
-// Configurar o middleware body-parser
+//Configurar o middleware body-parser
 app.use(bodyParser.json());
 
 // Rota para a raiz do servidor
@@ -48,7 +48,7 @@ app.get('/', (req, res) => {
   res.send('Bem-vindo ao sistema de gestão de livros e empréstimos!');
 });
 
-// Função para criar conta de bibliotecário
+//Função para criar conta de bibliotecário
 app.post('/bibliotecarios', (req, res) => {
   const { nome, cpf, email, usuario, senha } = req.body;
   db.run('INSERT INTO Bibliotecario (NomeBibliotecario, CPFBibliotecario, Email, Usuario, Senha) VALUES (?, ?, ?, ?, ?)', [nome, cpf, email, usuario, senha], (err) => {
@@ -61,7 +61,7 @@ app.post('/bibliotecarios', (req, res) => {
   });
 });
 
-// Função para fazer login de bibliotecário
+//Função para fazer login de bibliotecário
 app.post('/login', (req, res) => {
   const { email, senha } = req.body;
   console.log('Email recebido:', email); // Adicionar log para verificar o email recebido
@@ -81,7 +81,7 @@ app.post('/login', (req, res) => {
   });
 });
 
-// Função para criar ficha de aluno
+//Função para criar ficha de aluno
 app.post('/alunos', (req, res) => {
   const { nome, email, telefone, matricula, cpf, codigoLivro } = req.body;
   db.run('INSERT INTO FichaAluno (NomeAluno, Email, Telefone, Matricula, CPFAluno, CodigoLivro) VALUES (?, ?, ?, ?, ?, ?)', [nome, email, telefone, matricula, cpf, codigoLivro], (err) => {
@@ -94,10 +94,7 @@ app.post('/alunos', (req, res) => {
   });
 });
 
-
-
-
-// Função para consultar aluno por CPF
+//Função para consultar aluno por CPF
 app.get('/alunos/:cpf', (req, res) => {
   const { cpf } = req.params;
   db.get('SELECT * FROM FichaAluno WHERE CPFAluno = ?', [cpf], (err, row) => {
@@ -112,6 +109,7 @@ app.get('/alunos/:cpf', (req, res) => {
   });
 });
 
+//Função para consultar o bibliotecario
 app.get('/bibliotecarios/:cpf', (req, res) => {
   const { cpf } = req.params;
   console.log('Consultando CPF:', cpf); // Adicione este log para verificar o CPF recebido
@@ -130,7 +128,7 @@ app.get('/bibliotecarios/:cpf', (req, res) => {
   });
 });
 
-// Função para cadastrar livro
+//Função para cadastrar livro
 app.post('/livros', (req, res) => {
   const { codigoLivro, nome, autor, editora, ano, categoria, imagemLivro, dataReserva, dataDevolucao, status, cpfAluno } = req.body;
   db.run('INSERT INTO Livro (CodigoLivro, NomeLivro, Autor, Editora, Ano, Categoria, ImagemLivro, DataReserva, DataDevolucao, Status, CPFAluno) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [codigoLivro, nome, autor, editora, ano, categoria, imagemLivro, dataReserva, dataDevolucao, status, cpfAluno], (err) => {
@@ -143,7 +141,21 @@ app.post('/livros', (req, res) => {
   });
 });
 
-// Função para pesquisar livro pelo código
+//Função para cadastrar livro
+app.get('/livros', (req, res) => {
+  db.all('SELECT * FROM Livro', (err, row) => {
+    if (err) {
+      console.error(err.message);
+      res.status(500).send('Erro ao pesquisar livro');
+    } else if (!row) {
+      res.status(404).send('Livro não encontrado');
+    } else {
+      res.status(200).json(row);
+    }
+  });
+});
+
+//Função para pesquisar livro pelo código
 app.get('/livros/:codigo', (req, res) => {
   const { codigo } = req.params;
   db.get('SELECT * FROM Livro WHERE CodigoLivro = ?', [codigo], (err, row) => {
@@ -158,9 +170,7 @@ app.get('/livros/:codigo', (req, res) => {
   });
 });
 
-
-
-// Função para atualizar cadastro de livro
+//Função para atualizar cadastro de livro
 app.put('/livros/atualizar/:codigo', (req, res) => {
   const { nome, autor, editora, ano, categoria, imagemLivro, dataReserva, dataDevolucao, status, cpfAluno } = req.body;
   const { codigo } = req.params;
@@ -187,7 +197,7 @@ app.delete('/livros/delete/:codigo', (req, res) => {
   });
 });
 
-// Função para consultar pendências de livros
+//Função para consultar pendências de livros
 app.get('/pendencias', (req, res) => {
   db.all('SELECT Livro.NomeLivro, Livro.CodigoLivro, FichaAluno.NomeAluno, FichaAluno.CPFAluno, FichaAluno.Telefone FROM Livro INNER JOIN FichaAluno ON Livro.CPFAluno = FichaAluno.CPFAluno', (err, rows) => {
     if (err) {
@@ -199,6 +209,7 @@ app.get('/pendencias', (req, res) => {
   });
 });
 
+//Função para registrar a devolução do livro
 app.post('/devolver/:codigoLivro', (req, res) => {
   const { codigoLivro } = req.params;
 
@@ -215,7 +226,7 @@ app.post('/devolver/:codigoLivro', (req, res) => {
       return;
     }
 
-    // Limpar informações de reserva do livro
+    //Limpar informações de reserva do livro
     db.run('UPDATE Livro SET Status = ?, CPFAluno = ? WHERE CodigoLivro = ?', ['Disponível', null, codigoLivro], (err) => {
       if (err) {
         console.error(err.message);
@@ -227,6 +238,7 @@ app.post('/devolver/:codigoLivro', (req, res) => {
   });
 });
 
+//Função para reservar um livro
 app.post('/reservar/:codigoLivro/:cpfAluno', (req, res) => {
   const { codigoLivro, cpfAluno } = req.params;
 
