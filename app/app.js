@@ -85,9 +85,9 @@ const db = new sqlite3.Database('./database.db', (err) => {
       } else if (row.count === 0) {
         // Inserindo dez livros
         const livros = [
-          [1, 'Livro A', 'Autor A', 'Editora A', 2020, 'Ficção', null, null, null, 'Disponível', null],
-          [2, 'Livro B', 'Autor B', 'Editora B', 2019, 'Drama', null, null, null, 'Disponível', null],
-          [3, 'Livro C', 'Autor C', 'Editora C', 2021, 'Romance', null, null, null, 'Disponível', null],
+          [1, 'Livro A', 'Autor A', 'Editora A', 2020, 'Ficção', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbk2f_PypRaOZ43EsJ5XpHRgASG7TpKhpWuQ&s', null, null, 'Disponível', null],
+          [2, 'Livro B', 'Autor B', 'Editora B', 2019, 'Drama', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQi9rVL2GzfRxr3QXWc4vw4JVbUgkoNKcal4Q&s', null, null, 'Disponível', null],
+          [3, 'Livro C', 'Autor C', 'Editora C', 2021, 'Romance', 'null', null, null, 'Disponível', null],
           [4, 'Livro D', 'Autor D', 'Editora D', 2018, 'Aventura', null, null, null, 'Disponível', null],
           [5, 'Livro E', 'Autor E', 'Editora E', 2017, 'Terror', null, null, null, 'Disponível', null],
           [6, 'Livro F', 'Autor F', 'Editora F', 2016, 'Ficção Científica', null, null, null, 'Disponível', null],
