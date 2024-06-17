@@ -1,8 +1,9 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const sqlite3 = require('sqlite3').verbose();
+const cors = require('cors');
 const app = express();
-const port = 3000;
+const port = 3003;
 
 //Inicializando o banco de dados e criando tabelas
 const db = new sqlite3.Database('./database.db', (err) => {
@@ -42,6 +43,8 @@ const db = new sqlite3.Database('./database.db', (err) => {
 
 //Configurar o middleware body-parser
 app.use(bodyParser.json());
+
+app.use(cors());
 
 // Rota para a raiz do servidor
 app.get('/', (req, res) => {
